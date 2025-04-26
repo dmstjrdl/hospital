@@ -40,8 +40,8 @@ public class AvailableTimeServiceImpl implements AvailableTimeService {
     @Transactional
     @Override
     public ResponseInfoAvailableTime updateAvailableTime(Long availableTimeId, RequestUpdateAvailableTimeDTO updateAvailableTimeDTO) {
-        if (existsByDayOfWeek(updateAvailableTimeDTO.getDayOfWeek())) throw new BaseException(ErrorCode.AVAILABLE_TIME_ALREADY_EXIST);
         AvailableTime availableTime = getAvailableTimeById(availableTimeId);
+        if (existsByDayOfWeek(updateAvailableTimeDTO.getDayOfWeek())) throw new BaseException(ErrorCode.AVAILABLE_TIME_ALREADY_EXIST);
 
         if (updateAvailableTimeDTO.getDayOfWeek() != null) {
             availableTime.setDayOfWeek(updateAvailableTimeDTO.getDayOfWeek());
