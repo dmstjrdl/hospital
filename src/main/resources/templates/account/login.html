@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>병원 예약 시스템 - 로그인</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login-container {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      padding: 40px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo h1 {
+      color: #3498db;
+      font-size: 28px;
+    }
+
+    .logo p {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #34495e;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+    }
+
+    .remember-me input {
+      margin-right: 8px;
+    }
+
+    .remember-me label {
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+
+    .forgot-password a {
+      color: #3498db;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .forgot-password a:hover {
+      text-decoration: underline;
+    }
+
+    .login-button {
+      width: 100%;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 12px 0;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .login-button:hover {
+      background-color: #2980b9;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+
+    .register-link a {
+      color: #3498db;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .separator {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .separator::before,
+    .separator::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #dcdfe6;
+    }
+
+    .separator span {
+      padding: 0 10px;
+      color: #7f8c8d;
+      font-size: 12px;
+    }
+
+    .social-login {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .social-button {
+      background-color: white;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .social-button:hover {
+      background-color: #f5f7fa;
+    }
+  </style>
+</head>
+<body>
+<div class="login-container">
+  <div class="logo">
+    <h1>MediCare</h1>
+    <p>병원 예약 시스템</p>
+  </div>
+
+  <form action="/account/login" method="post">
+    <div class="input-group">
+      <label for="loginId">아이디</label>
+      <input type="text" id="loginId" name="loginId" placeholder="아이디를 입력하세요" required>
+    </div>
+
+    <div class="input-group">
+      <label for="password">비밀번호</label>
+      <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+    </div>
+
+    <div class="remember-forgot">
+      <div class="remember-me">
+        <input type="checkbox" id="remember">
+        <label for="remember">아이디 저장</label>
+      </div>
+      <div class="forgot-password">
+        <a href="#">비밀번호 찾기</a>
+      </div>
+    </div>
+
+    <button type="submit" class="login-button">로그인</button>
+
+    <div class="register-link">
+      계정이 없으신가요? <a href="#">회원가입</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>
