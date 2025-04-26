@@ -1,9 +1,12 @@
 package hello.hospital.doctor.domain;
 
+import hello.hospital.availabletime.domain.AvailableTime;
 import hello.hospital.department.domain.Department;
 import hello.hospital.hospital.domain.Hospital;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,6 +25,9 @@ public class Doctor {
     @ManyToOne
     @JoinColumn(name = "hospital_id")
     private Hospital hospital;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<AvailableTime> availableTimes;
 
     private String loginId;
     private String password;
