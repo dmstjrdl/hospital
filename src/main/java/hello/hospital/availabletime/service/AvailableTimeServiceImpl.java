@@ -5,6 +5,7 @@ import hello.hospital.availabletime.dto.RequestCreateAvailableTimeDTO;
 import hello.hospital.availabletime.dto.RequestUpdateAvailableTimeDTO;
 import hello.hospital.availabletime.dto.ResponseInfoAvailableTime;
 import hello.hospital.availabletime.repository.AvailableTimeRepository;
+import hello.hospital.doctor.domain.Doctor;
 import hello.hospital.doctor.service.DoctorService;
 import hello.hospital.exception.AvailableTimeNotFound;
 import hello.hospital.exception.BaseException;
@@ -24,10 +25,11 @@ public class AvailableTimeServiceImpl implements AvailableTimeService {
 
     @Override
     public ResponseInfoAvailableTime createAvailableTime(RequestCreateAvailableTimeDTO createAvailableTimeDTO) {
+        Doctor doctor = doctorService.getDoctorById(createAvailableTimeDTO.getDoctorId());
         if (existsByDayOfWeek(createAvailableTimeDTO.getDayOfWeek())) throw new BaseException(ErrorCode.AVAILABLE_TIME_ALREADY_EXIST);
 
         AvailableTime availableTime = AvailableTime.builder()
-                .doctor(doctorService.getDoctorById(createAvailableTimeDTO.getDoctorId()))
+                .doctor(doctor)
                 .dayOfWeek(createAvailableTimeDTO.getDayOfWeek())
                 .startTime(createAvailableTimeDTO.getStartTime())
                 .endTime(createAvailableTimeDTO.getEndTime())

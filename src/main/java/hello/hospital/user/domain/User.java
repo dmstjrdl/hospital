@@ -1,6 +1,7 @@
 package hello.hospital.user.domain;
 
 import hello.hospital.appointment.domain.Appointment;
+import hello.hospital.doctor.domain.Doctor;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,6 +36,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Doctor doctor;
 
     @CreationTimestamp
     private LocalDateTime createAt;

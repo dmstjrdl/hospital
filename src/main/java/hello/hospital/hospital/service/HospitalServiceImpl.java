@@ -69,6 +69,7 @@ public class HospitalServiceImpl implements HospitalService {
         return ResponseInfoHospitalDTO.from(hospital);
     }
 
+    @Override
     public Hospital getHospitalById(Long hospitalId) {
         return hospitalRepository.findById(hospitalId).orElseThrow(HospitalNotFound::new);
     }

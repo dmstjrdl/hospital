@@ -1,6 +1,7 @@
 package hello.hospital.appointment.service;
 
 import hello.hospital.appointment.dto.*;
+import hello.hospital.availabletime.domain.AvailableTime;
 import hello.hospital.exception.*;
 import hello.hospital.appointment.domain.Appointment;
 import hello.hospital.appointment.domain.AppointmentStatus;
@@ -11,6 +12,8 @@ import hello.hospital.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -33,9 +36,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public ResponseCreateAppointmentDTO createAppointment(RequestCreateAppointmentDTO requestCreateAppointmentDTO) {
-        appointmentRepository.findByAppointmentDate(requestCreateAppointmentDTO.getDate()).ifPresent(a -> {throw new BaseException(ErrorCode.APPOINTMENT_ALREADY_EXIST);});
-
         Doctor doctor = doctorService.getDoctorById(requestCreateAppointmentDTO.getDoctorId());
+        doctor.getAvailableTimes().stream()
+                .filter(time -> isAvailableTime(time, requestCreateAppointmentDTO.getDate().getDayOfWeek(), requestCreateAppointmentDTO.getDate().toLocalTime()))
+                .findFirst()
+                .orElseThrow(AppointmentTimeNotAvailable::new);
+
+        appointmentRepository.findByDoctorIdAndAppointmentDate(requestCreateAppointmentDTO.getDoctorId(), requestCreateAppointmentDTO.getDate())
+                .ifPresent(a -> {throw new BaseException(ErrorCode.APPOINTMENT_ALREADY_EXIST);});
+
         Appointment appointment = Appointment.builder()
                 .user(userService.getUserById(requestCreateAppointmentDTO.getUserId()))
                 .doctor(doctor)
@@ -59,6 +68,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         return ResponseCancelAppointmentDTO.from(appointment);
     }
 
+    @Override
     public Appointment getAppointmentById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId).orElseThrow(AppointmentNotFound::new);
     }
@@ -68,5 +78,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointments.isEmpty()) throw new BaseException(ErrorCode.APPOINTMENT_USER_NOT_FOUND);
 
         return appointments;
+    }
+
+    private boolean isAvailableTime(AvailableTime time, DayOfWeek dayOfWeek, LocalTime localTime) {
+        return time.getDayOfWeek().equals(dayOfWeek) &&
+                !localTime.isBefore(time.getStartTime()) &&
+                !localTime.isAfter(time.getEndTime());
     }
 }

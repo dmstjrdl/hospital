@@ -1,9 +1,17 @@
 package hello.hospital.doctor.service;
 
+import hello.hospital.department.domain.Department;
+import hello.hospital.department.service.DepartmentService;
 import hello.hospital.doctor.domain.Doctor;
+import hello.hospital.doctor.dto.RequestCreateDoctorDTO;
 import hello.hospital.doctor.dto.ResponseDoctorDTO;
+import hello.hospital.doctor.dto.ResponseInfoDoctorDTO;
 import hello.hospital.doctor.repository.DoctorRepository;
 import hello.hospital.exception.DoctorNotFound;
+import hello.hospital.hospital.domain.Hospital;
+import hello.hospital.hospital.service.HospitalService;
+import hello.hospital.user.domain.User;
+import hello.hospital.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +22,24 @@ import java.util.List;
 public class DoctorServiceImpl implements DoctorService{
 
     private final DoctorRepository doctorRepository;
+    private final UserService userService;
+    private final HospitalService hospitalService;
+    private final DepartmentService departmentService;
+
+    @Override
+    public ResponseInfoDoctorDTO createDoctor(RequestCreateDoctorDTO requestCreateDoctorDTO) {
+        User user = userService.getUserById(requestCreateDoctorDTO.getUserId());
+        Hospital hospital = hospitalService.getHospitalById(requestCreateDoctorDTO.getHospitalId());
+        Department department = departmentService.getDepartmentById(requestCreateDoctorDTO.getDepartmentId());
+        Doctor doctor = Doctor.builder()
+                .user(user)
+                .hospital(hospital)
+                .department(department)
+                .build();
+
+        doctorRepository.save(doctor);
+        return ResponseInfoDoctorDTO.from(doctor);
+    }
 
     @Override
     public ResponseDoctorDTO listDoctors(String hospitalName, String departmentName) {

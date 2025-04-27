@@ -26,7 +26,7 @@ public class ResponseInfoAppointmentDTO {
                 appointment.getId(),
                 appointment.getHospital().getName(),
                 appointment.getDoctor().getDepartment().getName(),
-                appointment.getDoctor().getName(),
+                appointment.getDoctor().getUser().getName(),
                 appointment.getAppointmentDate(),
                 appointment.getStatus()
         );

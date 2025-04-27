@@ -36,7 +36,7 @@ public class ResponseCreateAppointmentDTO {
                 appointment.getHospital().getName(),
                 appointment.getDoctor().getDepartment().getName(),
                 appointment.getDoctor().getId(),
-                appointment.getDoctor().getName(),
+                appointment.getDoctor().getUser().getName(),
                 appointment.getAppointmentDate(),
                 appointment.getStatus()
         );

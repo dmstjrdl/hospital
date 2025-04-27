@@ -18,7 +18,7 @@ public class ResponseInfoAvailableTime {
 
     public static ResponseInfoAvailableTime from(AvailableTime availableTime) {
         return new ResponseInfoAvailableTime(
-                availableTime.getDoctor().getName(),
+                availableTime.getDoctor().getUser().getName(),
                 availableTime.getDayOfWeek(),
                 availableTime.getStartTime(),
                 availableTime.getEndTime()

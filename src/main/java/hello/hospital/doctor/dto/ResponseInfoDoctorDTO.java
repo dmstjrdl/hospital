@@ -22,7 +22,7 @@ public class ResponseInfoDoctorDTO {
                 .toList();
 
         return new ResponseInfoDoctorDTO(
-                doctor.getName(),
+                doctor.getUser().getName(),
                 doctor.getHospital().getName(),
                 doctor.getDepartment().getName(),
                 availableTimes
