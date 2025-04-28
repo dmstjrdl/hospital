@@ -10,6 +10,7 @@ import hello.hospital.doctor.domain.Doctor;
 import hello.hospital.doctor.service.DoctorService;
 import hello.hospital.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -25,8 +26,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final DoctorService doctorService;
 
     @Override
-    public ResponseInfoAppointmentDTO infoAppointment(Long appointmentId) {
-        return ResponseInfoAppointmentDTO.from(getAppointmentById(appointmentId));
+    public ResponseInfoAppointmentDTO infoAppointment(Long userId, Long appointmentId) {
+        Appointment appointment = getAppointmentById(appointmentId);
+        if (!appointment.getUser().getId().equals(userId)) throw new InvalidAccess();
+
+        return ResponseInfoAppointmentDTO.from(appointment);
     }
 
     @Override
@@ -35,7 +39,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public ResponseCreateAppointmentDTO createAppointment(RequestCreateAppointmentDTO requestCreateAppointmentDTO) {
+    public ResponseCreateAppointmentDTO createAppointment(Long userId, RequestCreateAppointmentDTO requestCreateAppointmentDTO) {
         Doctor doctor = doctorService.getDoctorById(requestCreateAppointmentDTO.getDoctorId());
         doctor.getAvailableTimes().stream()
                 .filter(time -> isAvailableTime(time, requestCreateAppointmentDTO.getDate().getDayOfWeek(), requestCreateAppointmentDTO.getDate().toLocalTime()))
@@ -46,7 +50,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .ifPresent(a -> {throw new BaseException(ErrorCode.APPOINTMENT_ALREADY_EXIST);});
 
         Appointment appointment = Appointment.builder()
-                .user(userService.getUserById(requestCreateAppointmentDTO.getUserId()))
+                .user(userService.getUserById(userId))
                 .doctor(doctor)
                 .hospital(doctor.getHospital())
                 .appointmentDate(requestCreateAppointmentDTO.getDate())
@@ -59,9 +63,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public ResponseCancelAppointmentDTO cancelAppointment(Long appointmentId) {
+    public ResponseCancelAppointmentDTO cancelAppointment(Long userId, Long appointmentId) {
         Appointment appointment = getAppointmentById(appointmentId);
-        if (appointment.getStatus() == AppointmentStatus.CANCELED) throw new BaseException(ErrorCode.APPOINTMENT_ALREADY_CANCEL);
+        if (!appointment.getUser().getId().equals(userId)) throw new InvalidAccess();
+        if (appointment.getStatus() == AppointmentStatus.CANCELED) throw new AppointmentAlreadyCancel();
+
         appointment.setStatus(AppointmentStatus.CANCELED);
         appointmentRepository.save(appointment);
 

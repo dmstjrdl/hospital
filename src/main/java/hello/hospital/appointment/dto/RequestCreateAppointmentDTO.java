@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RequestCreateAppointmentDTO {
 
-    @NotNull(message = "로그인 오류")
-    private Long userId;
-
     @NotNull(message = "의사는 반드시 선택되어야 합니다.")
     private Long doctorId;
 

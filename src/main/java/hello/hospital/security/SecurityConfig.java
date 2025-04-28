@@ -24,12 +24,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http    .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/account/**").permitAll()
+                        .requestMatchers("/appointment/**").authenticated()
+                        .requestMatchers("/available/**").hasAnyAuthority("ADMIN", "DOCTOR")
+                        .requestMatchers("/doctor/add").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/hospital/add", "/hospital/*/update").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/record/**").hasAnyAuthority("DOCTOR")
+                        .requestMatchers("/record/appointment/**").authenticated()
                         .anyRequest().permitAll())
-                .formLogin(form -> form
-                        .loginPage("/login"))
-                .logout(Customizer.withDefaults());
+                .exceptionHandling(exception -> exception.accessDeniedHandler(new CustomAccessDeniedHandler())
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
 
         return http.build();
     }

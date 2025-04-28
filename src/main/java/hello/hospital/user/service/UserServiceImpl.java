@@ -1,9 +1,11 @@
 package hello.hospital.user.service;
 
+import hello.hospital.exception.UserAlreadyExists;
 import hello.hospital.exception.UserNotFound;
 import hello.hospital.user.domain.Role;
 import hello.hospital.user.domain.User;
 import hello.hospital.user.dto.RegisterDTO;
+import hello.hospital.user.dto.ResponseInfoUserDTO;
 import hello.hospital.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,7 +24,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(RegisterDTO registerDTO) {
+    public ResponseInfoUserDTO createUser(RegisterDTO registerDTO) {
+        boolean exist = existLoginId(registerDTO.getLoginId());
+        if (exist) throw new UserAlreadyExists();
+
         User user = User.builder()
                 .loginId(registerDTO.getLoginId())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
@@ -33,5 +38,10 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
+        return ResponseInfoUserDTO.from(user);
+    }
+
+    public boolean existLoginId(String loginId) {
+        return userRepository.existsByLoginId(loginId);
     }
 }

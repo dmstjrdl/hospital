@@ -4,9 +4,9 @@ import hello.hospital.appointment.domain.Appointment;
 import hello.hospital.appointment.dto.*;
 
 public interface AppointmentService {
-    ResponseInfoAppointmentDTO infoAppointment(Long appointmentId);
-    ResponseCreateAppointmentDTO createAppointment(RequestCreateAppointmentDTO requestCreateAppointmentDTO);
-    ResponseCancelAppointmentDTO cancelAppointment(Long appointmentId);
+    ResponseInfoAppointmentDTO infoAppointment(Long userId, Long appointmentId);
+    ResponseCreateAppointmentDTO createAppointment(Long userId, RequestCreateAppointmentDTO requestCreateAppointmentDTO);
+    ResponseCancelAppointmentDTO cancelAppointment(Long userId, Long appointmentId);
     ResponseUserAppointmentDTO userAppointment(Long userId);
 
     Appointment getAppointmentById(Long appointmentId);
