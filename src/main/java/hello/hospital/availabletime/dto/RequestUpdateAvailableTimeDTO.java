@@ -13,6 +13,9 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class RequestUpdateAvailableTimeDTO {
 
+    @NotNull
+    private Long availableTimeId;
+
     @NotBlank
     private DayOfWeek dayOfWeek;
 

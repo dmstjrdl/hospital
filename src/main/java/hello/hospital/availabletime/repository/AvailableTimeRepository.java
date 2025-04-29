@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.DayOfWeek;
 
 public interface AvailableTimeRepository extends JpaRepository<AvailableTime, Long> {
-    boolean existsByDayOfWeek(DayOfWeek dayOfWeek);
+    boolean existsByDoctorIdAndDayOfWeek(Long doctorId, DayOfWeek dayOfWeek);
 }

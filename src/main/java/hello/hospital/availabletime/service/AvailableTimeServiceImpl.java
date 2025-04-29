@@ -7,9 +7,7 @@ import hello.hospital.availabletime.dto.ResponseInfoAvailableTime;
 import hello.hospital.availabletime.repository.AvailableTimeRepository;
 import hello.hospital.doctor.domain.Doctor;
 import hello.hospital.doctor.service.DoctorService;
-import hello.hospital.exception.AvailableTimeNotFound;
-import hello.hospital.exception.BaseException;
-import hello.hospital.exception.ErrorCode;
+import hello.hospital.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +22,10 @@ public class AvailableTimeServiceImpl implements AvailableTimeService {
     private final DoctorService doctorService;
 
     @Override
-    public ResponseInfoAvailableTime createAvailableTime(RequestCreateAvailableTimeDTO createAvailableTimeDTO) {
+    public ResponseInfoAvailableTime createAvailableTime(Long userId, RequestCreateAvailableTimeDTO createAvailableTimeDTO) {
         Doctor doctor = doctorService.getDoctorById(createAvailableTimeDTO.getDoctorId());
-        if (existsByDayOfWeek(createAvailableTimeDTO.getDayOfWeek())) throw new BaseException(ErrorCode.AVAILABLE_TIME_ALREADY_EXIST);
+        if (!doctor.getUser().getId().equals(userId)) throw new InvalidAccess();
+        if (existsByDayOfWeek(createAvailableTimeDTO.getDoctorId(), createAvailableTimeDTO.getDayOfWeek())) throw new AvailableTimeAlreadyExist();
 
         AvailableTime availableTime = AvailableTime.builder()
                 .doctor(doctor)
@@ -41,27 +40,21 @@ public class AvailableTimeServiceImpl implements AvailableTimeService {
 
     @Transactional
     @Override
-    public ResponseInfoAvailableTime updateAvailableTime(Long availableTimeId, RequestUpdateAvailableTimeDTO updateAvailableTimeDTO) {
-        AvailableTime availableTime = getAvailableTimeById(availableTimeId);
-        if (existsByDayOfWeek(updateAvailableTimeDTO.getDayOfWeek())) throw new BaseException(ErrorCode.AVAILABLE_TIME_ALREADY_EXIST);
+    public ResponseInfoAvailableTime updateAvailableTime(Long userId, Long doctorId, RequestUpdateAvailableTimeDTO updateAvailableTimeDTO) {
+        AvailableTime availableTime = getAvailableTimeById(updateAvailableTimeDTO.getAvailableTimeId());
 
-        if (updateAvailableTimeDTO.getDayOfWeek() != null) {
-            availableTime.setDayOfWeek(updateAvailableTimeDTO.getDayOfWeek());
-        }
+        if (!availableTime.getDoctor().getUser().getId().equals(userId)) throw new InvalidAccess();
+        if (existsByDayOfWeek(doctorId, updateAvailableTimeDTO.getDayOfWeek()) && !availableTime.getDayOfWeek().equals(updateAvailableTimeDTO.getDayOfWeek())) throw new AvailableTimeAlreadyExist();
 
-        if (updateAvailableTimeDTO.getStartTime() != null) {
-            availableTime.setStartTime(updateAvailableTimeDTO.getStartTime());
-        }
-
-        if (updateAvailableTimeDTO.getEndTime() != null) {
-            availableTime.setEndTime(updateAvailableTimeDTO.getEndTime());
-        }
+        if (updateAvailableTimeDTO.getDayOfWeek() != null) availableTime.setDayOfWeek(updateAvailableTimeDTO.getDayOfWeek());
+        if (updateAvailableTimeDTO.getStartTime() != null) availableTime.setStartTime(updateAvailableTimeDTO.getStartTime());
+        if (updateAvailableTimeDTO.getEndTime() != null) availableTime.setEndTime(updateAvailableTimeDTO.getEndTime());
 
         return ResponseInfoAvailableTime.from(availableTime);
     }
 
-    public boolean existsByDayOfWeek(DayOfWeek dayOfWeek) {
-        return availableTimeRepository.existsByDayOfWeek(dayOfWeek);
+    public boolean existsByDayOfWeek(Long doctorId, DayOfWeek dayOfWeek) {
+        return availableTimeRepository.existsByDoctorIdAndDayOfWeek(doctorId, dayOfWeek);
     }
 
     public AvailableTime getAvailableTimeById(Long availableTimeId) {

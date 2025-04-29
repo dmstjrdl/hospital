@@ -15,9 +15,6 @@ public class RequestCreateAppointmentDTO {
     @NotNull(message = "의사는 반드시 선택되어야 합니다.")
     private Long doctorId;
 
-    @NotNull(message = "병원은 반드시 선택되어야 합니다.")
-    private Long hospitalId;
-
     @Future(message = "예약시간이 잘못되었습니다.")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime date;
