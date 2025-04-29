@@ -4,8 +4,10 @@ import hello.hospital.medicalrecord.dto.RequestCreateMedicalRecordDTO;
 import hello.hospital.medicalrecord.dto.RequestUpdateMedicalRecordDTO;
 import hello.hospital.medicalrecord.dto.ResponseInfoMedicalRecordDTO;
 import hello.hospital.medicalrecord.service.MedicalRecordService;
+import hello.hospital.user.domain.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,8 +23,8 @@ public class MedicalRecordController {
     }
 
     @PutMapping("/{medicalRecordId}/update")
-    public ResponseEntity<ResponseInfoMedicalRecordDTO> updateMedicalRecord(@PathVariable Long medicalRecordId, @RequestBody RequestUpdateMedicalRecordDTO requestUpdateMedicalRecordDTO) {
-        return ResponseEntity.ok(medicalRecordService.updateMedicalRecord(medicalRecordId, requestUpdateMedicalRecordDTO));
+    public ResponseEntity<ResponseInfoMedicalRecordDTO> updateMedicalRecord(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long medicalRecordId, @RequestBody RequestUpdateMedicalRecordDTO requestUpdateMedicalRecordDTO) {
+        return ResponseEntity.ok(medicalRecordService.updateMedicalRecord(customUserDetails.getId(), medicalRecordId, requestUpdateMedicalRecordDTO));
     }
 
     @GetMapping("/appointment/{appointmentId}")

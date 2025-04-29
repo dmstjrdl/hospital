@@ -3,6 +3,7 @@ package hello.hospital.medicalrecord.service;
 import hello.hospital.appointment.domain.Appointment;
 import hello.hospital.appointment.domain.AppointmentStatus;
 import hello.hospital.appointment.service.AppointmentService;
+import hello.hospital.exception.InvalidAccess;
 import hello.hospital.exception.MedicalRecordAlreadyExist;
 import hello.hospital.exception.MedicalRecordNotFound;
 import hello.hospital.medicalrecord.domain.MedicalRecord;
@@ -25,9 +26,7 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
     @Override
     public ResponseInfoMedicalRecordDTO createMedicalRecord(RequestCreateMedicalRecordDTO requestCreateMedicalRecordDTO) {
         Appointment appointment = appointmentService.getAppointmentById(requestCreateMedicalRecordDTO.getAppointmentId());
-        if (medicalRecordRepository.existsByAppointmentId(requestCreateMedicalRecordDTO.getAppointmentId())) {
-            throw new MedicalRecordAlreadyExist();
-        }
+        if (medicalRecordRepository.existsByAppointmentId(requestCreateMedicalRecordDTO.getAppointmentId())) throw new MedicalRecordAlreadyExist();
 
         MedicalRecord medicalRecord = MedicalRecord.builder()
                 .appointment(appointment)
@@ -43,18 +42,13 @@ public class MedicalRecordServiceImpl implements MedicalRecordService {
 
     @Transactional
     @Override
-    public ResponseInfoMedicalRecordDTO updateMedicalRecord(Long medicalRecordId, RequestUpdateMedicalRecordDTO requestUpdateMedicalRecordDTO) {
+    public ResponseInfoMedicalRecordDTO updateMedicalRecord(Long userId, Long medicalRecordId, RequestUpdateMedicalRecordDTO requestUpdateMedicalRecordDTO) {
         MedicalRecord medicalRecord = getMedicalRecordById(medicalRecordId);
+        if (medicalRecord.getAppointment().getDoctor().getUser().getId().equals(userId)) throw new InvalidAccess();
 
-        if (requestUpdateMedicalRecordDTO.getDiagnosis() != null) {
-            medicalRecord.setDiagnosis(requestUpdateMedicalRecordDTO.getDiagnosis());
-        }
-        if (requestUpdateMedicalRecordDTO.getPrescription() != null) {
-            medicalRecord.setPrescription(requestUpdateMedicalRecordDTO.getPrescription());
-        }
-        if (requestUpdateMedicalRecordDTO.getSymptoms() != null) {
-            medicalRecord.setSymptoms(requestUpdateMedicalRecordDTO.getSymptoms());
-        }
+        if (requestUpdateMedicalRecordDTO.getDiagnosis() != null) medicalRecord.setDiagnosis(requestUpdateMedicalRecordDTO.getDiagnosis());
+        if (requestUpdateMedicalRecordDTO.getPrescription() != null) medicalRecord.setPrescription(requestUpdateMedicalRecordDTO.getPrescription());
+        if (requestUpdateMedicalRecordDTO.getSymptoms() != null) medicalRecord.setSymptoms(requestUpdateMedicalRecordDTO.getSymptoms());
 
         return ResponseInfoMedicalRecordDTO.from(medicalRecord);
     }

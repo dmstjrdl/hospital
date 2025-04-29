@@ -7,6 +7,6 @@ import hello.hospital.medicalrecord.dto.ResponseInfoMedicalRecordDTO;
 public interface MedicalRecordService {
 
     ResponseInfoMedicalRecordDTO createMedicalRecord(RequestCreateMedicalRecordDTO requestCreateMedicalRecordDTO);
-    ResponseInfoMedicalRecordDTO updateMedicalRecord(Long medicalRecordId, RequestUpdateMedicalRecordDTO requestUpdateMedicalRecordDTO);
+    ResponseInfoMedicalRecordDTO updateMedicalRecord(Long userId, Long medicalRecordId, RequestUpdateMedicalRecordDTO requestUpdateMedicalRecordDTO);
     ResponseInfoMedicalRecordDTO infoMedicalRecord(Long appointmentId);
 }
